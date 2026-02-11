@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+  <title>Ambulance RwandEX · Complete Fleet Log</title>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- html2pdf library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f6f9fc 0%, #edf2f7 100%);
+      min-height: 100vh;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .system-container {
+      max-width: 1500px;
+      width: 100%;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 48px 48px 32px 32px;
+      box-shadow: 0 20px 40px -10px rgba(0,20,40,0.25);
+      padding: 32px 28px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .top-brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      background: #003C5A;
+      color: #FFCC00;
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      box-shadow: 0 8px 14px rgba(0,60,90,0.2);
+    }
+
+    .title h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0B2B40;
+      line-height: 1.1;
+    }
+
+    .title span {
+      color: #C4281C;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: rgba(196,40,28,0.12);
+      padding: 4px 12px;
+      border-radius: 40px;
+      display: inline-block;
+      margin-top: 6px;
+    }
+
+    .driver-badge {
+      background: white;
+      padding: 10px 24px;
+      border-radius: 100px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      border: 1px solid #dee7ed;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .driver-badge i {
+      color: #003C5A;
+      font-size: 1.3rem;
+    }
+    .driver-badge:hover {
+      background: #f3f9ff;
+    }
+
+    /* form card – travel plan entry with new fields */
+    .plan-card {
+      background: white;
+      border-radius: 32px;
+      padding: 28px 30px;
+      margin-bottom: 40px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.04);
+      border: 1px solid #ffffff70;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .section-title i {
+      font-size: 26px;
+      color: #006B8F;
+      background: #e6f1f5;
+      padding: 10px;
+      border-radius: 16px;
+    }
+
+    .section-title h2 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #0a3140;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px 18px;
+    }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-field label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #2c4b5a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .input-field label i {
+      width: 18px;
+      color: #00668c;
+    }
+
+    .input-field input, .input-field select {
+      background: #f2f8fd;
+      border: 1.5px solid transparent;
+      padding: 14px 18px;
+      border-radius: 20px;
+      font-size: 1rem;
+      transition: 0.2s;
+      border: 1.5px solid #dae5ec;
+    }
+
+    .input-field input:focus, .input-field select:focus {
+      border-color: #0083b0;
+      background: white;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(0,131,176,0.08);
+    }
+
+    .btn-add {
+      background: #003C5A;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 14px 34px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+      margin-top: 24px;
+      width: fit-content;
+      box-shadow: 0 8px 18px rgba(0,60,90,0.2);
+    }
+
+    .btn-add:hover {
+      background: #002a40;
+      transform: scale(0.98);
+    }
+
+    /* travel plans list table */
+    .plans-list-section {
+      background: white;
+      border-radius: 32px;
+      padding: 24px 20px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.04);
+      margin-bottom: 30px;
+      overflow-x: auto;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .list-header h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1f3f4d;
+      display: flex;
+      gap: 10px;
+    }
+
+    .storage-badge {
+      background: #e4ecef;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #004d66;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      min-width: 1400px;
+    }
+
+    th {
+      background: #eef5f9;
+      color: #124052;
+      font-weight: 600;
+      padding: 18px 12px;
+      font-size: 0.9rem;
+    }
+
+    td {
+      padding: 18px 12px;
+      border-bottom: 1px solid #dfecf0;
+      color: #1e3b47;
+    }
+
+    .badge-patient {
+      background: #cbe5f0;
+      color: #005073;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+    .badge-staff {
+      background: #dde8cf;
+      color: #2d5a1e;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+
+    .action-icons i {
+      margin: 0 8px;
+      color: #4a6c7c;
+      cursor: pointer;
+      transition: 0.1s;
+      font-size: 1.1rem;
+    }
+
+    .action-icons i:hover {
+      color: #C4281C;
+    }
+
+    /* report generation panel */
+    .report-panel {
+      background: linear-gradient(115deg, #1e3f50 0%, #0e2e3a 100%);
+      border-radius: 28px;
+      padding: 30px 32px;
+      color: white;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .report-text {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .report-text i {
+      font-size: 40px;
+      color: #FFCC00;
+    }
+
+    .report-text h4 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .btn-pdf {
+      background: #C4281C;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 12px 22px rgba(196,40,28,0.3);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-pdf:hover {
+      background: #9e2017;
+      transform: translateY(-3px);
+    }
+
+    .powered {
+      margin-top: 28px;
+      text-align: right;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #0b3743;
+      border-top: 2px dashed rgba(0,107,128,0.2);
+      padding-top: 24px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .powered i {
+      color: #C4281C;
+      font-size: 1.5rem;
+    }
+
+    .empty-row td {
+      padding: 40px;
+      text-align: center;
+      color: #657e8a;
+      font-style: italic;
+    }
+
+    /* modal for driver name setup */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10,30,40,0.8);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: white;
+      max-width: 460px;
+      width: 90%;
+      padding: 40px 36px;
+      border-radius: 48px;
+      box-shadow: 0 40px 60px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    .modal-content i {
+      font-size: 52px;
+      color: #FFCC00;
+      background: #003C5A;
+      padding: 20px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+    }
+    .modal-content h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #002c3d;
+      margin-bottom: 12px;
+    }
+    .modal-content p {
+      color: #2e5462;
+      margin-bottom: 28px;
+    }
+    .modal-content input {
+      width: 100%;
+      padding: 16px 22px;
+      border-radius: 60px;
+      border: 2px solid #d0dee6;
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+    .modal-content button {
+      background: #003C5A;
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      width: 100%;
+      cursor: pointer;
+    }
+    /* conditional staff name field - shown only when Staff selected */
+    .staff-only-field {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- DRIVER SETUP MODAL - appears on first use -->
+  <div id="driverModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <i class="fas fa-user-circle"></i>
+      <h3>Murakaza neza!</h3>
+      <p>Enter your name to start using Ambulance RwandEX.<br>This will be saved on this device.</p>
+      <input type="text" id="driverNameInput" placeholder="e.g. Billy Chriss" autocomplete="off">
+      <button id="saveDriverBtn"><i class="fas fa-check-circle"></i> Start driving</button>
+    </div>
+  </div>
+
+<div class="system-container">
+  <!-- BRAND HEADER: driver name dynamic / click to change -->
+  <div class="top-brand">
+    <div class="logo-area">
+      <div class="logo-icon">
+        <i class="fas fa-ambulance"></i>
+      </div>
+      <div class="title">
+        <h1>Ambulance RwandEX</h1>
+        <span><i class="fas fa-route"></i> fleet log • offline</span>
+      </div>
+    </div>
+    <div class="driver-badge" id="driverBadge">
+      <i class="fas fa-id-card"></i>
+      <span id="driverNameSpan">loading driver...</span>
+      <i class="fas fa-pen" style="font-size: 0.9rem; opacity: 0.7;"></i>
+    </div>
+  </div>
+
+  <!-- ENTRY FORM: COMPLETE with car plate, departure pos, staff name, person type, km -->
+  <div class="plan-card">
+    <div class="section-title">
+      <i class="fas fa-pen-to-square"></i>
+      <h2>Record trip</h2>
+    </div>
+    <div class="form-grid">
+      <!-- Car plate number (NEW) -->
+      <div class="input-field">
+        <label><i class="fas fa-car"></i> Car plate</label>
+        <input type="text" id="plateInput" placeholder="RAC 123 A" value="">
+      </div>
+      <!-- Departure position (NEW) -->
+      <div class="input-field">
+        <label><i class="fas fa-building"></i> Departure position</label>
+        <input type="text" id="departurePosInput" placeholder="Station / Garage">
+      </div>
+      <!-- Pickup -->
+      <div class="input-field">
+        <label><i class="fas fa-map-pin"></i> Pickup</label>
+        <input type="text" id="pickupInput" placeholder="Kigali, Remera">
+      </div>
+      <!-- Destination -->
+      <div class="input-field">
+        <label><i class="fas fa-location-dot"></i> Destination</label>
+        <input type="text" id="destInput" placeholder="Butare Hospital">
+      </div>
+      <!-- Kilometers driven -->
+      <div class="input-field">
+        <label><i class="fas fa-tachometer-alt"></i> Kilometers (km)</label>
+        <input type="number" id="kmInput" placeholder="e.g. 24.5" step="0.1" min="0">
+      </div>
+      <!-- Person type: Staff or Patient -->
+      <div class="input-field">
+        <label><i class="fas fa-user-tag"></i> Person type</label>
+        <select id="personTypeSelect">
+          <option value="Patient">🚑 Patient</option>
+          <option value="Staff">👨‍⚕️ Staff</option>
+        </select>
+      </div>
+      <!-- Staff name field (conditional, appears only if Staff selected) -->
+      <div class="input-field staff-only-field" id="staffNameField">
+        <label><i class="fas fa-user-md"></i> Staff full name</label>
+        <input type="text" id="staffNameInput" placeholder="Dr. Uwase, Nurse Kamanzi...">
+      </div>
+      <!-- Auto date (readonly) -->
+      <div class="input-field">
+        <label><i class="fas fa-calendar"></i> Date (auto)</label>
+        <input type="date" id="dateInput" readonly style="background:#eef3f5;">
+      </div>
+      <!-- Auto time -->
+      <div class="input-field">
+        <label><i class="fas fa-clock"></i> Time (auto)</label>
+        <input type="time" id="timeInput" readonly style="background:#eef3f5;">
+      </div>
+      <!-- Patient / Ref (optional) -->
+      <div class="input-field">
+        <label><i class="fas fa-user"></i> Patient / Ref</label>
+        <input type="text" id="patientInput" placeholder="Optional ID">
+      </div>
+      <!-- Reason / Note -->
+      <div class="input-field">
+        <label><i class="fas fa-stethoscope"></i> Reason / Note</label>
+        <input type="text" id="reasonInput" placeholder="Emergency, transfer...">
+      </div>
+    </div>
+    <button class="btn-add" id="addPlanBtn">
+      <i class="fas fa-circle-plus"></i> Add travel plan
+    </button>
+  </div>
+
+  <!-- TRAVEL PLANS TABLE – now with plate, departure, staff name, person type, km -->
+  <div class="plans-list-section">
+    <div class="list-header">
+      <h3><i class="fas fa-clipboard-list"></i> Trip history</h3>
+      <div class="storage-badge" id="storageInfo">
+        <i class="fas fa-hard-drive"></i> <span id="storageText">device storage</span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table id="travelTable">
+        <thead>
+          <tr>
+            <th>Plate</th>
+            <th>Departure</th>
+            <th>Pickup</th>
+            <th>Destination</th>
+            <th>Km</th>
+            <th>Person</th>
+            <th>Staff name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Patient/Ref</th>
+            <th>Reason</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr class="empty-row"><td colspan="12"><i class="fas fa-circle-info"></i> No trips yet. Add one above.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PDF REPORT GENERATION -->
+  <div class="report-panel">
+    <div class="report-text">
+      <i class="fas fa-file-pdf"></i>
+      <div>
+        <h4>Generate full report</h4>
+        <p style="opacity: 0.9;">Includes plate, staff, km, departure, driver</p>
+      </div>
+    </div>
+    <button class="btn-pdf" id="pdfReportBtn">
+      <i class="fas fa-print"></i> Export PDF
+    </button>
+  </div>
+
+  <!-- POWERED BY BILLY CHRISS -->
+  <div class="powered">
+    <i class="fas fa-bolt"></i> 
+    <span style="background: #0e2e3a; color: white; padding: 8px 22px; border-radius: 60px; letter-spacing: 1px;">POWERED BY BILLY CHRISS</span>
+    <i class="fas fa-heart" style="color: #FFCC00;"></i>
+  </div>
+</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // ----------------------------------------------------------------
+    // OFFLINE STORAGE ENGINE (IndexedDB + localStorage fallback)
+    // ----------------------------------------------------------------
+    const DB_NAME = 'AmbulanceRwandEX_v3';
+    const STORE_NAME = 'travelPlans';
+    const DB_VERSION = 3;
+    const DRIVER_STORAGE_KEY = 'ambulance_driver_name';
+    
+    let dbInstance = null;
+    let useLocalFallback = false;
+    const STORAGE_KEY = 'ambulance_travel_plans_v3';
+
+    // ---------- Driver name management ----------
+    function getDriverName() {
+      return localStorage.getItem(DRIVER_STORAGE_KEY) || null;
+    }
+    function setDriverName(name) {
+      localStorage.setItem(DRIVER_STORAGE_KEY, name.trim());
+    }
+
+    // show modal if no driver
+    function ensureDriverModal() {
+      const driver = getDriverName();
+      const modal = document.getElementById('driverModal');
+      const driverSpan = document.getElementById('driverNameSpan');
+      if (driver) {
+        modal.style.display = 'none';
+        driverSpan.innerText = driver;
+      } else {
+        modal.style.display = 'flex';
+        driverSpan.innerText = 'Set driver';
+      }
+    }
+
+    // ---------- Conditional staff field show/hide ----------
+    function toggleStaffField() {
+      const personType = document.getElementById('personTypeSelect').value;
+      const staffField = document.getElementById('staffNameField');
+      if (personType === 'Staff') {
+        staffField.style.display = 'flex';
+      } else {
+        staffField.style.display = 'none';
+        // clear staff name when hidden
+        document.getElementById('staffNameInput').value = '';
+      }
+    }
+
+    // ---------- Create travel plan with ALL new fields ----------
+    function createTravelPlan(plate, departurePos, pickup, destination, km, personType, staffName, date, time, patient, reason) {
+      const now = new Date();
+      const autoDate = date || now.toISOString().split('T')[0];
+      const autoTime = time || now.toTimeString().slice(0,5);
+      
+      // If person is Patient, staff name should be empty
+      const finalStaffName = (personType === 'Staff') ? (staffName.trim() || '—') : '—';
+      
+      return {
+        id: Date.now() + '-' + Math.random().toString(36).substring(2, 8),
+        plateNumber: plate.trim() || '—',
+        departurePosition: departurePos.trim() || '—',
+        pickup: pickup.trim() || '—',
+        destination: destination.trim() || '—',
+        kilometers: km ? parseFloat(km).toFixed(1) : '0.0',
+        personType: personType || 'Patient',
+        staffName: finalStaffName,            // new field
+        date: autoDate,
+        time: autoTime,
+        patient: patient.trim() || '—',
+        reason: reason.trim() || '—',
+        timestamp: new Date().toISOString(),
+        driver: getDriverName() || 'Unknown driver'
+      };
+    }
+
+    // ---------- IndexedDB init ----------
+    function initDB() {
+      return new Promise((resolve) => {
+        if (useLocalFallback) return resolve(null);
+        if (!window.indexedDB) {
+          useLocalFallback = true;
+          return resolve(null);
+        }
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => {
+          useLocalFallback = true;
+          resolve(null);
+        };
+        request.onsuccess = (event) => {
+          dbInstance = event.target.result;
+          resolve(dbInstance);
+        };
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            store.createIndex('date', 'date', { unique: false });
+          }
+        };
+      });
+    }
+
+    // ---------- get all plans ----------
+    async function getAllPlans() {
+      if (!useLocalFallback && dbInstance) {
+        return new Promise((resolve) => {
+          const tx = dbInstance.transaction(STORE_NAME, 'readonly');
+          const store = tx.objectStore(STORE_NAME);
+          const request = store.getAll();
+          request.onsuccess = () => resolve(request.result || []);
+          request.onerror = () => {
+            const fallback = localStorage.getItem(STORAGE_KEY);
+            resolve(fallback ? JSON.parse(fallback) : []);
+          };
+        });
+      } else {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : [];
+      }
+    }
+
+    // ---------- add plan ----------
+    async function addPlan(plan) {
+      if (!useLocalFallback && dbInstance) {
+        return new Promise((resolve) => {
+          const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+          const store = tx.objectStore(STORE_NAME);
+          store.add(plan);
+          resolve(plan);
+        });
+      } else {
+        let list = [];
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) list = JSON.parse(stored);
+        list.push(plan);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        return Promise.resolve(plan);
+      }
+    }
+
+    // ---------- delete plan ----------
+    async function deletePlan(planId) {
+      if (!useLocalFallback && dbInstance) {
+        const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        store.delete(planId);
+      } else {
+        let list = [];
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) list = JSON.parse(stored);
+        list = list.filter(p => p.id !== planId);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      }
+      renderTable();
+    }
+
+    // ---------- RENDER TABLE with new columns: plate, departure, staff name ----------
+    async function renderTable() {
+      const plans = await getAllPlans();
+      const tbody = document.getElementById('tableBody');
+      if (!tbody) return;
+
+      const storageSpan = document.getElementById('storageText');
+      if (storageSpan) {
+        storageSpan.innerText = useLocalFallback ? '📁 localStorage' : '💾 IndexedDB';
+      }
+
+      if (plans.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="12"><i class="fas fa-circle-info"></i> No trips yet. Add one above.</td></tr>`;
+        return;
+      }
+
+      let html = '';
+      plans.sort((a,b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+      plans.forEach(p => {
+        const personClass = p.personType === 'Staff' ? 'badge-staff' : 'badge-patient';
+        const personIcon = p.personType === 'Staff' ? '👨‍⚕️' : '🚑';
+        const staffDisplay = p.personType === 'Staff' ? (p.staffName || '—') : '—';
+        html += `<tr>
+          <td><i class="fas fa-id-card" style="color:#003C5A;"></i> ${escapeHTML(p.plateNumber || '—')}</td>
+          <td><i class="fas fa-flag"></i> ${escapeHTML(p.departurePosition || '—')}</td>
+          <td><i class="fas fa-map-marker-alt" style="color:#006B8F;"></i> ${escapeHTML(p.pickup)}</td>
+          <td><i class="fas fa-flag-checkered" style="color:#C4281C;"></i> ${escapeHTML(p.destination)}</td>
+          <td><strong>${escapeHTML(p.kilometers || '0.0')} km</strong></td>
+          <td><span class="${personClass}">${personIcon} ${escapeHTML(p.personType)}</span></td>
+          <td>${escapeHTML(staffDisplay)}</td>
+          <td>${escapeHTML(p.date)}</td>
+          <td>${escapeHTML(p.time)}</td>
+          <td>${escapeHTML(p.patient)}</td>
+          <td>${escapeHTML(p.reason)}</td>
+          <td class="action-icons">
+            <i class="fas fa-trash-can" onclick="window.deletePlanHandler('${p.id}')" title="Delete trip"></i>
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '—';
+      return String(str).replace(/[&<>"]/g, function(c) {
+        if(c === '&') return '&amp;';
+        if(c === '<') return '&lt;';
+        if(c === '>') return '&gt;';
+        if(c === '"') return '&quot;';
+        return c;
+      });
+    }
+
+    // ---------- Add handler with all new fields ----------
+    async function handleAddTravel() {
+      if (!getDriverName()) {
+        alert('Please set driver name first.');
+        ensureDriverModal();
+        return;
+      }
+
+      const plate = document.getElementById('plateInput')?.value || '';
+      const departurePos = document.getElementById('departurePosInput')?.value || '';
+      const pickup = document.getElementById('pickupInput')?.value || '';
+      const dest = document.getElementById('destInput')?.value || '';
+      const km = document.getElementById('kmInput')?.value || '';
+      const personType = document.getElementById('personTypeSelect')?.value || 'Patient';
+      let staffName = '';
+      if (personType === 'Staff') {
+        staffName = document.getElementById('staffNameInput')?.value || '';
+      }
+      
+      const now = new Date();
+      const autoDate = now.toISOString().split('T')[0];
+      const autoTime = now.toTimeString().slice(0,5);
+      
+      const patient = document.getElementById('patientInput')?.value || '';
+      const reason = document.getElementById('reasonInput')?.value || '';
+
+      if (!pickup && !dest) {
+        alert('Enter at least pickup or destination');
+        return;
+      }
+
+      const newPlan = createTravelPlan(plate, departurePos, pickup, dest, km, personType, staffName, autoDate, autoTime, patient, reason);
+      await addPlan(newPlan);
+      
+      // Clear fields (except date/time auto, keep plate, departure?)
+      document.getElementById('plateInput').value = '';
+      document.getElementById('departurePosInput').value = '';
+      document.getElementById('pickupInput').value = '';
+      document.getElementById('destInput').value = '';
+      document.getElementById('kmInput').value = '';
+      document.getElementById('patientInput').value = '';
+      document.getElementById('reasonInput').value = '';
+      document.getElementById('staffNameInput').value = '';
+      document.getElementById('personTypeSelect').value = 'Patient';
+      toggleStaffField(); // hide staff field
+      
+      renderTable();
+    }
+
+    // ---------- PDF Generation with new fields ----------
+    async function generatePDFReport() {
+      const plans = await getAllPlans();
+      if (plans.length === 0) {
+        alert('No trips to generate report.');
+        return;
+      }
+      const driver = getDriverName() || '—';
+
+      const reportDiv = document.createElement('div');
+      reportDiv.id = 'pdfReportContainer';
+      reportDiv.style.position = 'absolute';
+      reportDiv.style.left = '-9999px';
+      reportDiv.style.top = '0';
+      reportDiv.style.background = 'white';
+      reportDiv.style.padding = '35px 40px';
+      reportDiv.style.width = '1400px';
+      reportDiv.style.fontFamily = 'Inter, Helvetica, sans-serif';
+
+      let currentDate = new Date().toLocaleDateString('en-RW', { year: 'numeric', month: 'long', day: 'numeric' });
+      
+      let htmlContent = `
+        <div style="display: flex; align-items: center; border-bottom: 4px solid #C4281C; padding-bottom: 20px; margin-bottom: 28px;">
+          <div style="background: #003C5A; color: #FFCC00; width: 70px; height: 70px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-right: 22px;">
+            <i class="fas fa-ambulance"></i>
+          </div>
+          <div>
+            <h1 style="font-size: 38px; font-weight: 700; margin:0; color: #002c3d;">Ambulance RwandEX</h1>
+            <p style="font-size: 18px; color: #2f5e6b;">Driver: <strong>${escapeHTML(driver)}</strong> · Complete fleet report</p>
+          </div>
+          <div style="margin-left: auto; text-align: right;">
+            <div style="background: #eef3f5; padding: 12px 24px; border-radius: 50px; font-weight: 600;">${currentDate}</div>
+          </div>
+        </div>
+        <h3 style="font-size: 24px; font-weight: 600; margin-bottom: 18px;"><i class="fas fa-clipboard"></i> Trip history (plate, departure, staff details)</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 38px; background: #f6fbfe; border-radius: 16px; font-size: 12px;">
+          <thead style="background: #0f4457; color: white;">
+            <tr>
+              <th style="padding: 12px;">Plate</th>
+              <th style="padding: 12px;">Departure</th>
+              <th style="padding: 12px;">Pickup</th>
+              <th style="padding: 12px;">Dest.</th>
+              <th style="padding: 12px;">Km</th>
+              <th style="padding: 12px;">Person</th>
+              <th style="padding: 12px;">Staff name</th>
+              <th style="padding: 12px;">Date</th>
+              <th style="padding: 12px;">Time</th>
+              <th style="padding: 12px;">Ref</th>
+              <th style="padding: 12px;">Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      plans.sort((a,b) => (a.date || '').localeCompare(b.date || '')).forEach(p => {
+        const staffDisplay = p.personType === 'Staff' ? (p.staffName || '—') : '—';
+        htmlContent += `<tr style="border-bottom: 1px solid #cbd8de;">
+          <td style="padding: 12px;">${escapeHTML(p.plateNumber || '—')}</td>
+          <td style="padding: 12px;">${escapeHTML(p.departurePosition || '—')}</td>
+          <td style="padding: 12px;">${escapeHTML(p.pickup)}</td>
+          <td style="padding: 12px;">${escapeHTML(p.destination)}</td>
+          <td style="padding: 12px;"><strong>${escapeHTML(p.kilometers || '0.0')} km</strong></td>
+          <td style="padding: 12px;">${escapeHTML(p.personType)}</td>
+          <td style="padding: 12px;">${escapeHTML(staffDisplay)}</td>
+          <td style="padding: 12px;">${escapeHTML(p.date)}</td>
+          <td style="padding: 12px;">${escapeHTML(p.time)}</td>
+          <td style="padding: 12px;">${escapeHTML(p.patient)}</td>
+          <td style="padding: 12px;">${escapeHTML(p.reason)}</td>
+        </tr>`;
+      });
+
+      const totalKm = plans.reduce((acc, p) => acc + (parseFloat(p.kilometers) || 0), 0).toFixed(1);
+      htmlContent += `
+          </tbody>
+        </table>
+        <div style="display: flex; justify-content: space-between; margin-top: 30px; border-top: 2px dashed #aac3cc; padding-top: 24px;">
+          <div><i class="fas fa-route"></i> Total trips: <span style="font-weight: 800;">${plans.length}</span></div>
+          <div><i class="fas fa-gas-pump"></i> Total km: <span style="font-weight: 800;">${totalKm} km</span></div>
+          <div style="font-weight: 700; background: #0e2e3a; color: white; padding: 12px 28px; border-radius: 50px;">POWERED BY BILLY CHRISS</div>
+        </div>
+      `;
+
+      reportDiv.innerHTML = htmlContent;
+      document.body.appendChild(reportDiv);
+
+      try {
+        const opt = {
+          margin:        [0.4, 0.4, 0.4, 0.4],
+          filename:     `Ambulance_RwandEX_${driver}_${new Date().toISOString().slice(0,10)}.pdf`,
+          image:        { type: 'jpeg', quality: 0.95 },
+          html2canvas:  { scale: 1.6, letterRendering: true },
+          jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+        };
+        await html2pdf().set(opt).from(reportDiv).save();
+      } catch (e) {
+        alert('PDF error, but data is safe.');
+      } finally {
+        document.body.removeChild(reportDiv);
+      }
+    }
+
+    // ---------- Window handlers, initial load ----------
+    window.deletePlanHandler = function(id) {
+      if (confirm('Delete this trip?')) deletePlan(id);
+    };
+
+    window.onload = async function() {
+      await initDB();
+      
+      // Driver modal logic
+      const modal = document.getElementById('driverModal');
+      const saveBtn = document.getElementById('saveDriverBtn');
+      const driverInput = document.getElementById('driverNameInput');
+      const driverBadge = document.getElementById('driverBadge');
+      
+      ensureDriverModal();
+      
+      saveBtn.addEventListener('click', function() {
+        const name = driverInput.value.trim();
+        if (name) {
+          setDriverName(name);
+          document.getElementById('driverNameSpan').innerText = name;
+          modal.style.display = 'none';
+        } else {
+          alert('Please enter your name.');
+        }
+      });
+
+      driverBadge.addEventListener('click', function() {
+        const current = getDriverName() || '';
+        document.getElementById('driverNameInput').value = current;
+        modal.style.display = 'flex';
+      });
+
+      // Toggle staff field on person type change
+      const personSelect = document.getElementById('personTypeSelect');
+      personSelect.addEventListener('change', toggleStaffField);
+      toggleStaffField(); // initial hide
+
+      // Auto set date/time fields
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0];
+      const timeStr = now.toTimeString().slice(0,5);
+      if (document.getElementById('dateInput')) document.getElementById('dateInput').value = dateStr;
+      if (document.getElementById('timeInput')) document.getElementById('timeInput').value = timeStr;
+
+      // Update time every minute
+      setInterval(() => {
+        const n = new Date();
+        if (document.getElementById('dateInput')) document.getElementById('dateInput').value = n.toISOString().split('T')[0];
+        if (document.getElementById('timeInput')) document.getElementById('timeInput').value = n.toTimeString().slice(0,5);
+      }, 60000);
+
+      await renderTable();
+      
+      document.getElementById('addPlanBtn').addEventListener('click', handleAddTravel);
+      document.getElementById('pdfReportBtn').addEventListener('click', generatePDFReport);
+    };
+  })();
+</script>
+
+</body>
+</html>
